@@ -8,7 +8,7 @@ function send_page(page){
 	jQuery.post( myPlugin.ajaxurl, data, function(response) {
 		jQuery('#cfilter-products').fadeOut(100);
 		jQuery('#cfilter-products').html(response).fadeIn(200);
-		// jQuery(".woocommerce-pagination a").removeClass('current');
+		// jQuery(".woocommerce-pagination a").removeClass('current'); a
 		// jQuery(".woocommerce-pagination a").eq(page-1).addClass('current');
 		// jQuery(".woocommerce-pagination a").eq(page-1).removeAttr('onclick');
 		jQuery(".woocommerce-pagination a").click(function (event) {

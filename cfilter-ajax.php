@@ -1,7 +1,7 @@
 <?php  
 
 /**
-* Plugin Name: Category Filter Ajax.
+* Plugin Name: Category Filter Ajax. a
 */
 add_action('wp_ajax_cfilter', 'cfilter_ajax_load', 99);
 add_action('wp_ajax_nopriv_cfilter', 'cfilter_ajax_load', 99);	
