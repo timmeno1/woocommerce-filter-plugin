@@ -45,6 +45,51 @@ function cfilter_load_products(){
         <div id="cfilter-products" class="product-content"></div>
     </div>
     <?php
+
+      $taxonomy     = 'product_cat';
+      $orderby      = 'name';
+      $show_count   = 0;      // 1 for yes, 0 for no
+      $pad_counts   = 0;      // 1 for yes, 0 for no
+      $hierarchical = 1;      // 1 for yes, 0 for no
+      $title        = '';
+      $empty        = 0;
+
+      $args = array(
+             'taxonomy'     => $taxonomy,
+             'orderby'      => $orderby,
+             'show_count'   => $show_count,
+             'pad_counts'   => $pad_counts,
+             'hierarchical' => $hierarchical,
+             'title_li'     => $title,
+             'hide_empty'   => $empty
+      );
+     $all_categories = get_categories( $args );
+     foreach ($all_categories as $cat) {
+        if($cat->category_parent == 0) {
+            $category_id = $cat->term_id;
+            echo '<br /><a href="'. get_term_link($cat->slug, 'product_cat') .'">'. $cat->name .'</a>';
+
+            $args2 = array(
+                    'taxonomy'     => $taxonomy,
+                    'child_of'     => 0,
+                    'parent'       => $category_id,
+                    'orderby'      => $orderby,
+                    'show_count'   => $show_count,
+                    'pad_counts'   => $pad_counts,
+                    'hierarchical' => $hierarchical,
+                    'title_li'     => $title,
+                    'hide_empty'   => $empty
+            );
+            $sub_cats = get_categories( $args2 );
+            if($sub_cats) {
+                foreach($sub_cats as $sub_category) {
+                    $thumbnail_id = get_term_meta( $sub_category->term_id, 'thumbnail_id', true );
+                    $image_url = wp_get_attachment_url( $thumbnail_id );
+                    echo  '<br/><a href="'. get_term_link($sub_category->slug, 'product_cat') .'"><img src="'. $image_url .'"> '. $sub_category->name .'</a>';
+                }
+            }
+        }
+    }
 }
 
 function cfilter_ajax_load(){
@@ -107,10 +152,11 @@ function cfilter_ajax_load(){
 					<li><a class="page-numbers" href="#" onclick="send_page(<?php echo $prev_page; ?>)">Prev</a></li>
 					<li><a class="page-numbers" href="#" onclick="send_page(<?php echo $next_page; ?>)">Next</a></li>
 			</ul>
-		</nav> <?php
-	} else {
-		do_action('woocommerce_no_products_found');
-	}
+		</nav>
+
+               	<?php
+
+    }
 
 	wp_die();
 }
