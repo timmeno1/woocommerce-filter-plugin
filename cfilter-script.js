@@ -41,4 +41,12 @@ jQuery(document).ready(function() {
 
 		
 	});
+	jQuery(".quick-nav a").click(function (event) {
+		event.preventDefault();
+
+		var cat = jQuery(this).text().toLowerCase();
+		cat = ".nav-sub-cat." + cat
+		console.log(cat)
+		jQuery(cat).addClass("show-subcat")
+	});
 });

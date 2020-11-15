@@ -52,7 +52,15 @@ function cfilter_load_products(){
       $pad_counts   = 0;      // 1 for yes, 0 for no
       $hierarchical = 1;      // 1 for yes, 0 for no
       $title        = '';
-      $empty        = 0;
+      $empty        = 1;
+
+      $icons = array(
+        'iphone' => 'icon2-iphoneg',
+        'ipad' => 'icon2-ipadg',
+        'samsung' => 'icon2-galaxys10',
+        'computer' => 'icon2-macg',
+        'other' => 'icon2-ps4',
+      );
 
       $args = array(
              'taxonomy'     => $taxonomy,
@@ -64,10 +72,11 @@ function cfilter_load_products(){
              'hide_empty'   => $empty
       );
      $all_categories = get_categories( $args );
+     ?> <div class="quick-nav"> <?php
      foreach ($all_categories as $cat) {
         if($cat->category_parent == 0) {
             $category_id = $cat->term_id;
-            echo '<br /><a href="'. get_term_link($cat->slug, 'product_cat') .'">'. $cat->name .'</a>';
+            echo '<a href="#" class="label"><div class="'. $icons[strtolower($cat->name)] .'"></div>'. $cat->name .'</a>';
 
             $args2 = array(
                     'taxonomy'     => $taxonomy,
@@ -80,16 +89,22 @@ function cfilter_load_products(){
                     'title_li'     => $title,
                     'hide_empty'   => $empty
             );
+
             $sub_cats = get_categories( $args2 );
             if($sub_cats) {
+            echo '<div class="nav-sub-cat '.  strtolower($cat->name) .' ">';
                 foreach($sub_cats as $sub_category) {
                     $thumbnail_id = get_term_meta( $sub_category->term_id, 'thumbnail_id', true );
                     $image_url = wp_get_attachment_url( $thumbnail_id );
                     echo  '<br/><a href="'. get_term_link($sub_category->slug, 'product_cat') .'"><img src="'. $image_url .'"> '. $sub_category->name .'</a>';
                 }
+
+            ?> </div>
+             <?php
             }
         }
     }
+    ?> </div> <?php
 }
 
 function cfilter_ajax_load(){

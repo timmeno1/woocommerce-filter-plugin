@@ -255,3 +255,29 @@
 .woocommerce #cfilter-products nav.woocommerce-pagination {
     margin-top:1.5em;
 }
+
+
+
+/* ===========   new quick nav ============= */
+
+.quick-nav {
+    display: flex;
+    justify-content: space-around;
+}
+
+.quick-nav > a {
+    text-align:center;
+    font-size: 1.5em;
+}
+
+.quick-nav > a [class*='icon2-']:before {
+    font-size:4.5em;
+}
+
+.quick-nav > .nav-sub-cat {
+    display:none;
+}
+
+.quick-nav > .nav-sub-cat.show-subcat {
+    display:flex;
+}
