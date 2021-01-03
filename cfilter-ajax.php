@@ -1,7 +1,7 @@
 <?php  
 
 /**
-* Plugin Name: Category Filter Ajax. a
+* Plugin Name: Category Filter Ajax. 2.0.1
 */
 add_action('wp_ajax_cfilter', 'cfilter_ajax_load', 99);
 add_action('wp_ajax_nopriv_cfilter', 'cfilter_ajax_load', 99);	
@@ -32,37 +32,45 @@ function cfilter_load_products(){
 		'return'		=> 'ids'
 	));
 	?>
-	<div class="cfilter_container woocommerce">
-        <div id="nav-holder">
-            <div class="cfilter_category_nav" id="cfilter_tabs">
-            	<ul>
-            		<li><a id="iphone" class="product active" href="#">iPhone</a></li>
-               		<li><a id="samsung-smartphones" class="product" href="#" >Samsung</a></li>
-              		<li><a id="ipad" class="product" href="#">iPad</a></li>
-               	</ul>
-            </div>
-        </div>
-        <div id="cfilter-products" class="product-content"></div>
-    </div>
-    <?php
 
-      $taxonomy     = 'product_cat';
-      $orderby      = 'name';
-      $show_count   = 0;      // 1 for yes, 0 for no
-      $pad_counts   = 0;      // 1 for yes, 0 for no
-      $hierarchical = 1;      // 1 for yes, 0 for no
-      $title        = '';
-      $empty        = 1;
+	<div class="quick-nav"> 
+     	<div class="quick-nav-row quick-nav-category">
+	     	<a href="#" class="label"><div class="icon2-iphoneg"></div>iPhone</a>
+	     	<a href="#" class="label"><div class="icon2-ipadg"></div>iPad</a>
+	     	<a href="#" class="label"><div class="icon2-galaxys10"></div>Samsung</a>
+     	</div>
+     	<div class="quick-nav-row quick-nav-content-1"></div>
+     	<div class="quick-nav-row quick-nav-category">
+	     	<a href="#" class="label"><div class="icon2-macg"></div>Computer</a>
+	     	<a href="#" class="label"><div class="icon2-macg"></div>Other</a>
+     	</div>
+     	<div class="quick-nav-row quick-nav-content-2"></div>
+     </div>
 
-      $icons = array(
+     	<?php
+}
+
+function cfilter_ajax_load(){
+
+	$show_cat = esc_attr($_POST['show_cat']);
+
+	$taxonomy     = 'product_cat';
+    $orderby      = 'name';
+    $show_count   = 0;      // 1 for yes, 0 for no
+    $pad_counts   = 0;      // 1 for yes, 0 for no
+    $hierarchical = 1;      // 1 for yes, 0 for no
+    $title        = '';
+    $empty        = 1;
+
+	$icons = array(
         'iphone' => 'icon2-iphoneg',
         'ipad' => 'icon2-ipadg',
         'samsung' => 'icon2-galaxys10',
         'computer' => 'icon2-macg',
         'other' => 'icon2-ps4',
-      );
+    );
 
-      $args = array(
+    $args = array(
              'taxonomy'     => $taxonomy,
              'orderby'      => $orderby,
              'show_count'   => $show_count,
@@ -70,107 +78,34 @@ function cfilter_load_products(){
              'hierarchical' => $hierarchical,
              'title_li'     => $title,
              'hide_empty'   => $empty
-      );
-     $all_categories = get_categories( $args );
-     ?> <div class="quick-nav"> <?php
-     foreach ($all_categories as $cat) {
-        if($cat->category_parent == 0) {
-            $category_id = $cat->term_id;
-            echo '<a href="#" class="label"><div class="'. $icons[strtolower($cat->name)] .'"></div>'. $cat->name .'</a>';
+    );
+    $all_categories = get_categories( $args );
 
-            $args2 = array(
-                    'taxonomy'     => $taxonomy,
-                    'child_of'     => 0,
-                    'parent'       => $category_id,
-                    'orderby'      => $orderby,
-                    'show_count'   => $show_count,
-                    'pad_counts'   => $pad_counts,
-                    'hierarchical' => $hierarchical,
-                    'title_li'     => $title,
-                    'hide_empty'   => $empty
-            );
-
-            $sub_cats = get_categories( $args2 );
-            if($sub_cats) {
-            echo '<div class="nav-sub-cat '.  strtolower($cat->name) .' ">';
-                foreach($sub_cats as $sub_category) {
-                    $thumbnail_id = get_term_meta( $sub_category->term_id, 'thumbnail_id', true );
-                    $image_url = wp_get_attachment_url( $thumbnail_id );
-                    echo  '<br/><a href="'. get_term_link($sub_category->slug, 'product_cat') .'"><img src="'. $image_url .'"> '. $sub_category->name .'</a>';
-                }
-
-            ?> </div>
-             <?php
-            }
-        }
-    }
-    ?> </div> <?php
-}
-
-function cfilter_ajax_load(){
+    foreach ($all_categories as $cat) {
+	        if( $cat->name == $show_cat ) {
+	            $category_id = $cat->term_id;
+	            
+	            $args2 = array(
+	                'taxonomy'     => $taxonomy,
+	                'child_of'     => 0,
+	                'parent'       => $category_id,
+	                'orderby'      => $orderby,
+	                'show_count'   => $show_count,
+	                'pad_counts'   => $pad_counts,
+	                'hierarchical' => $hierarchical,
+	                'title_li'     => $title,
+	                'hide_empty'   => $empty
+	        	);
 	
-	$per_page = 6;
-
-	if (empty( $_POST['paged'])) {   // ajax post request data
-		$paged   = 0;
-	} else {
-		$paged = $per_page*(esc_attr($_POST['paged'])-1);
-	}
-		if (empty( $_POST['show_cat'] )){
-		$show_cat = 'iphone';
-	} else {
-		$show_cat = esc_attr($_POST['show_cat']);
-	}
-
-	$products = wc_get_products( array(  // array of filtered products
-		'category'		=> array( $show_cat ),  // iphone , ipad , samsung-smartphones
-		'tag'			=> array( 'broken-screen' ),
-		'limit'			=> -1,
-		'orderby' => 'modified',
-    	'order' => 'ASC',
-		'return'		=> 'ids'
-	));
-
-
-	if($products) {
-			if($paged == 0){
-				$prev_page = esc_attr($_POST['paged']);
-				$next_page = esc_attr($_POST['paged']) + 1;
-			} elseif ($paged>=count($products)-5) {
-				$prev_page = esc_attr($_POST['paged']) - 1;
-				$next_page = esc_attr($_POST['paged']);
-			} else {
-				$prev_page = esc_attr($_POST['paged']) - 1;
-				$next_page = esc_attr($_POST['paged']) + 1;
-			}
-		?>
-		<nav class="woocommerce-pagination">
-			<ul class="page-numbers">
-					<li><a class="page-numbers" href="#" onclick="send_page(<?php echo $prev_page; ?>)">Prev</a></li>
-					<li><a class="page-numbers" href="#" onclick="send_page(<?php echo $next_page; ?>)">Next</a></li>
-			</ul>
-		</nav> <?php
-		do_action('woocommerce_before_shop_loop');
-		woocommerce_product_loop_start();
-		for( $i=$paged ; $i < $paged + $per_page && $i <= count($products) ; $i++){
-			$post_object = get_post($products[$i]);
-			setup_postdata($GLOBALS['post'] =& $post_object);
-			wc_get_template_part('content', 'product');
-		}
-
-		wp_reset_postdata();
-		woocommerce_product_loop_end();
-		do_action('woocommerce_after_shop_loop');
-		?>
-		<nav class="woocommerce-pagination">
-			<ul class="page-numbers">
-					<li><a class="page-numbers" href="#" onclick="send_page(<?php echo $prev_page; ?>)">Prev</a></li>
-					<li><a class="page-numbers" href="#" onclick="send_page(<?php echo $next_page; ?>)">Next</a></li>
-			</ul>
-		</nav>
-
-               	<?php
-
+		        $sub_cats = get_categories( $args2 );
+		        if($sub_cats) {
+		          	echo '<ul class="quick-nav-content">';
+		            foreach($sub_cats as $sub_category) {
+		                $thumbnail_id = get_term_meta( $sub_category->term_id, 'thumbnail_id', true );
+		                echo  '<li class="quick-nav-content-item"><a href="'. get_term_link($sub_category->slug, 'product_cat') .'"><span class="icon2-iphoneg"></span> '. $sub_category->name .'</a>';
+		            }
+	            }
+	        }
     }
 
 	wp_die();
