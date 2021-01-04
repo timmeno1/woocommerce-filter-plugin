@@ -1,7 +1,7 @@
 <?php  
 
 /**
-* Plugin Name: Category Filter Ajax. 2.0.1
+* Plugin Name: Category Filter Ajax. 2.1.0
 */
 add_action('wp_ajax_cfilter', 'cfilter_ajax_load', 99);
 add_action('wp_ajax_nopriv_cfilter', 'cfilter_ajax_load', 99);	
@@ -39,12 +39,12 @@ function cfilter_load_products(){
 	     	<a href="#" class="label"><div class="icon2-ipadg"></div>iPad</a>
 	     	<a href="#" class="label"><div class="icon2-galaxys10"></div>Samsung</a>
      	</div>
-     	<div class="quick-nav-row quick-nav-content-1"></div>
+     	<div class="quick-nav-row qn-content quick-nav-content-1"></div>
      	<div class="quick-nav-row quick-nav-category">
 	     	<a href="#" class="label"><div class="icon2-macg"></div>Computer</a>
 	     	<a href="#" class="label"><div class="icon2-macg"></div>Other</a>
      	</div>
-     	<div class="quick-nav-row quick-nav-content-2"></div>
+     	<div class="quick-nav-row qn-content quick-nav-content-2"></div>
      </div>
 
      	<?php
@@ -55,7 +55,7 @@ function cfilter_ajax_load(){
 	$show_cat = esc_attr($_POST['show_cat']);
 
 	$taxonomy     = 'product_cat';
-    $orderby      = 'name';
+    $orderby      = 'menu_order';
     $show_count   = 0;      // 1 for yes, 0 for no
     $pad_counts   = 0;      // 1 for yes, 0 for no
     $hierarchical = 1;      // 1 for yes, 0 for no
