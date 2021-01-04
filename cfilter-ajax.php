@@ -67,8 +67,11 @@ function cfilter_ajax_load(){
         'ipad' => 'icon2-ipadg',
         'samsung' => 'icon2-galaxys10',
         'computer' => 'icon2-macg',
-        'other' => 'icon2-ps4',
+        'other' => 'icon2-macg',
     );
+
+    $icon = esc_attr($_POST['show_cat']);
+    $icon = $icons[strtolower($icon)];
 
     $args = array(
              'taxonomy'     => $taxonomy,
@@ -79,6 +82,7 @@ function cfilter_ajax_load(){
              'title_li'     => $title,
              'hide_empty'   => $empty
     );
+
     $all_categories = get_categories( $args );
 
     foreach ($all_categories as $cat) {
@@ -102,7 +106,7 @@ function cfilter_ajax_load(){
 		          	echo '<ul class="quick-nav-content">';
 		            foreach($sub_cats as $sub_category) {
 		                $thumbnail_id = get_term_meta( $sub_category->term_id, 'thumbnail_id', true );
-		                echo  '<li class="quick-nav-content-item"><a href="'. get_term_link($sub_category->slug, 'product_cat') .'"><span class="icon2-iphoneg"></span> '. $sub_category->name .'</a>';
+		                echo  '<li class="quick-nav-content-item"><a href="'. get_term_link($sub_category->slug, 'product_cat') .'"><span class="'. $icon .'"></span> '. $sub_category->name .'</a>';
 		            }
 	            }
 	        }
